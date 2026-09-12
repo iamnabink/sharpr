@@ -55,7 +55,7 @@ Open http://localhost:3000 and create the first account (it becomes the admin). 
 
 Recordings are stored in `./data/recordings`. For S3-compatible storage set `STORAGE_BACKEND=s3` plus the `S3_*` variables in `.env`, or run `./start.sh --s3` to include MinIO. Set `ALLOW_REGISTRATION=false` once your accounts exist.
 
-`./start.sh --down` stops everything; `./start.sh --logs` follows logs.
+`./stop.sh` stops everything (`./stop.sh --reset` also wipes the database); `./start.sh --logs` follows logs.
 
 ## Bring your own content
 
@@ -68,7 +68,8 @@ Give it [`docs/IMPORT_SCHEMA.md`](docs/IMPORT_SCHEMA.md), then paste the result 
 ## Develop
 
 ```bash
-./run.sh      # Postgres in Docker, API (:8000) with reload, web (:3000) with hot reload
+./start.sh --dev   # Postgres in Docker, API (:8000) with reload, web (:3000) with hot reload
+./stop.sh          # stop dev servers and containers
 ```
 
 - **API**: FastAPI, SQLAlchemy 2 (async), Alembic, PostgreSQL 16, Pydantic v2, JWT cookie auth, sqladmin, pluggable storage (local volume or S3)

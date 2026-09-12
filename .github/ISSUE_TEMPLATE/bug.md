@@ -10,4 +10,4 @@ labels: bug
 
 **Expected**
 
-**Environment** (browser, `./start.sh` or `./run.sh`, OS):
+**Environment** (browser, `./start.sh` or `./start.sh --dev`, OS):

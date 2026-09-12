@@ -11,8 +11,9 @@ Thanks for helping people get their brains back. Sharpr is small on purpose: one
 ## Development
 
 ```bash
-./run.sh          # Postgres in Docker, API with reload on :8000, web on :3000
+./start.sh --dev  # Postgres in Docker, API with reload on :8000, web on :3000
 ./start.sh        # the full containerized stack, as a server runs it
+./stop.sh         # stop either
 ```
 
 Before a PR:

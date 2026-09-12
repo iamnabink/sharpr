@@ -10,7 +10,7 @@ docker compose
 └── minio  optional S3-compatible storage    profile: s3
 ```
 
-The browser only talks to the web origin. Next.js rewrites forward `/api/v1/*`, `/docs`, `/openapi.json` and `/admin/*` to the API container, so cookies are first-party, CORS is unnecessary and media streaming works without extra headers. The rewrite target comes from `API_INTERNAL_URL`, which Next.js resolves at build time: it is a Docker build argument (default `http://api:8000`) and an env var for local `npm run dev` (default `http://localhost:8000`). Set `NEXT_PUBLIC_API_URL` only if the browser must reach the API on a different domain (the API's `CORS_ORIGINS` then matters).
+The browser only talks to the web origin. Next.js rewrites forward `/api/v1/*`, `/docs`, `/openapi.json` and `/admin/*` to the API container, so cookies are first-party, CORS is unnecessary and media streaming works without extra headers. The rewrite target comes from `API_INTERNAL_URL`, which Next.js resolves at build time: it is a Docker build argument (default `http://api:8000`) and an env var for local `npm run dev` / `./start.sh --dev` (default `http://localhost:8000`). Set `NEXT_PUBLIC_API_URL` only if the browser must reach the API on a different domain (the API's `CORS_ORIGINS` then matters).
 
 ## Repository layout
 
