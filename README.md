@@ -38,11 +38,19 @@ Every attempt can be recorded (audio or video), played back, reviewed on twelve 
 
 ## Run it
 
-You need Docker.
+You need Docker. Fastest, with prebuilt images from Docker Hub (`iamnabink/sharpr-api`, `iamnabink/sharpr-web`, amd64 and arm64):
+
+```bash
+mkdir sharpr && cd sharpr
+curl -fsSLO https://raw.githubusercontent.com/iamnabink/sharpr/main/docker-compose.hub.yml
+SECRET_KEY=$(openssl rand -hex 32) docker compose -f docker-compose.hub.yml up -d
+```
+
+Or from source:
 
 ```bash
 git clone https://github.com/iamnabink/sharpr.git && cd sharpr
-./start.sh
+./start.sh            # builds locally;  ./start.sh --pull uses the Docker Hub images
 ```
 
 Open http://localhost:3000 and create the first account (it becomes the admin). Every account gets the bundled starter library: 155 prompts, 45 vocabulary items, 4 collections, 3 books, 7 session templates, 4 goals.

@@ -5,6 +5,7 @@
 #   ./start.sh            full stack in Docker: db + api + web  →  http://localhost:3000
 #   ./start.sh --s3       same, plus MinIO (set STORAGE_BACKEND=s3 in .env to use it)
 #   ./start.sh --logs     start, then follow container logs
+#   ./start.sh --pull     use the prebuilt images from Docker Hub instead of building
 #   ./start.sh --dev      developer mode: Postgres in Docker, API (:8000) and web (:3000)
 #                         running natively with hot reload. Ctrl+C stops them.
 #
@@ -19,12 +20,14 @@ WEB="$ROOT/apps/web"
 PROFILE=""
 LOGS=0
 DEV=0
+PULL=0
 for arg in "$@"; do
   case "$arg" in
     --s3) PROFILE="--profile s3" ;;
     --logs) LOGS=1 ;;
     --dev) DEV=1 ;;
-    -h|--help) sed -n '2,11p' "$0"; exit 0 ;;
+    --pull) PULL=1 ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) echo "Unknown option: $arg"; exit 1 ;;
   esac
 done
@@ -44,7 +47,12 @@ mkdir -p data/recordings
 # ── Docker mode ───────────────────────────────────────────────────────────
 if [ "$DEV" = 0 ]; then
   set -e
-  docker compose $PROFILE up -d --build
+  if [ "$PULL" = 1 ]; then
+    docker compose $PROFILE pull api web
+    docker compose $PROFILE up -d --no-build
+  else
+    docker compose $PROFILE up -d --build
+  fi
   echo
   echo "Sharpr is starting."
   echo "  App    http://localhost:3000   (create the first account — it becomes admin)"
