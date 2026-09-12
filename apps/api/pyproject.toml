@@ -1,0 +1,43 @@
+[project]
+name = "sharpr-api"
+version = "0.1.0"
+description = "Sharpr API — backend for the Sharpr communication trainer"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "sqlalchemy[asyncio]>=2.0",
+  "psycopg[binary,pool]>=3.2",
+  "alembic>=1.13",
+  "pydantic[email]>=2.9",
+  "pydantic-settings>=2.5",
+  "pyjwt>=2.9",
+  "pwdlib[argon2]>=0.2",
+  "python-multipart>=0.0.12",
+  "boto3>=1.35",
+  "sqladmin>=0.20",
+  "itsdangerous>=2.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "httpx>=0.27", "ruff>=0.6", "aiosqlite>=0.20"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "DTZ", "RUF"]
+# B008: FastAPI's Depends()/Query() in defaults is the intended pattern.
+# RUF012: SQLAlchemy/Pydantic class-level defaults. E501: formatter handles line length.
+ignore = ["B008", "RUF012", "E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

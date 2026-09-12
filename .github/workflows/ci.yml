@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sharpr
+          POSTGRES_PASSWORD: sharpr
+          POSTGRES_DB: sharpr
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sharpr" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg://sharpr:sharpr@localhost:5432/sharpr
+      SEED_DIR: ./seed
+      STORAGE_LOCAL_PATH: /tmp/recordings
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: ruff check app
+      - run: alembic upgrade head
+      - name: Smoke test
+        run: |
+          uvicorn app.main:app --port 8000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/health && break; sleep 1; done
+          curl -sf -c cj -X POST http://localhost:8000/api/v1/auth/register -H 'Content-Type: application/json' \
+            -d '{"email":"ci@example.com","password":"password123","name":"CI"}' > /dev/null
+          test "$(curl -sf -b cj http://localhost:8000/api/v1/content | python -c 'import sys,json; print(len(json.load(sys.stdin)))')" -gt 100
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build

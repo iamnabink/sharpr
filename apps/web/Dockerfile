@@ -1,0 +1,24 @@
+FROM node:22-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+# npm install (not ci): lockfiles generated on macOS omit Linux-only optional packages (sharp/emnapi)
+RUN npm install --no-audit --no-fund
+
+FROM node:22-alpine AS build
+WORKDIR /app
+ARG NEXT_PUBLIC_API_URL=
+# Rewrites are resolved at build time, so the internal API address is a build arg.
+ARG API_INTERNAL_URL=http://api:8000
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL API_INTERNAL_URL=$API_INTERNAL_URL
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+
+FROM node:22-alpine AS run
+WORKDIR /app
+ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]
