@@ -31,6 +31,9 @@ services:
       SECRET_KEY: ${SECRET_KEY:-}
       DATA_DIR: /data
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
       STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
       STORAGE_LOCAL_PATH: /data/recordings
       S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-}

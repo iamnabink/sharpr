@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     data_dir: str = "./data"
     access_token_days: int = 30
     allow_registration: bool = True
+    # Optional bootstrap admin: created on first start only when no users exist yet.
+    admin_email: str = ""
+    admin_password: str = ""
+    admin_name: str = "Admin"
     cors_origins: str = "http://localhost:3000"
     cookie_name: str = "sharpr_session"
     cookie_secure: bool = False

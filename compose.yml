@@ -36,6 +36,9 @@ services:
       STORAGE_LOCAL_PATH: /data/recordings
       SEED_DIR: /app/seed
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-500}
       STORAGE_BACKEND: ${STORAGE_BACKEND:-local}

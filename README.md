@@ -61,6 +61,19 @@ Two named volumes hold all state:
 | `db_data` | The PostgreSQL data directory. |
 | `sharpr_data` | Recording files under `recordings/`, and `secret_key` (see below). |
 
+### Accounts and seeded data
+
+Nothing is pre-installed with a known password.
+
+| What | Default |
+|---|---|
+| Admin account | **None.** The first account created on the sign-up page becomes the admin. Or set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` before the first start and that admin is created automatically (ignored once any user exists). |
+| Test or demo users | None. |
+| Registration | Open (`ALLOW_REGISTRATION=true`). Set it to `false` after creating your accounts; the first account can always be created. |
+| Content per new account | 155 prompts (speaking topics, interview questions across 7 tracks, tech talks with learning material, stories, podcasts, debates, scenarios, knowledge topics), 45 vocabulary items, 4 collections, 3 example books, 7 session templates, 4 goals. Everything is editable or deletable in the app, and Settings → Re-import bundled seed adds back anything you removed. |
+
+Each account has its own library; content is not shared between users.
+
 ### The database
 
 - **Credentials** default to `sharpr` / `sharpr` / database `sharpr`. Both `db` and `api` read them from `.env`, so changing `POSTGRES_PASSWORD` there changes both sides. Change it **before** the first start; after that PostgreSQL has already initialised with the old password and you would need `docker compose down -v` (which deletes data) or an `ALTER USER` inside the container.
@@ -88,6 +101,7 @@ By default recordings live in the `sharpr_data` volume. Audio is about 1 MB per 
 | `SECRET_KEY` | *(generated)* | Session signing key. See above. |
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `sharpr` | Database credentials. |
 | `ALLOW_REGISTRATION` | `true` | Set `false` after creating your accounts. The first account can always be created. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` / `ADMIN_NAME` | *(empty)* | Create this admin on first start when no users exist. Leave empty to create the admin through the sign-up page. |
 | `COOKIE_SECURE` | `false` | Set `true` when served over HTTPS. |
 | `MAX_UPLOAD_MB` | `500` | Largest recording accepted. |
 | `STORAGE_BACKEND` | `local` | `local` or `s3`. |

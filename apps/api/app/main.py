@@ -21,10 +21,12 @@ from app.routers import (
     settings,
     vocabulary,
 )
+from app.services.bootstrap import bootstrap_admin
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await bootstrap_admin()
     yield
 
 
