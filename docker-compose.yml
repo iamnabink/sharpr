@@ -1,3 +1,6 @@
+# Developer compose file: builds the images from this checkout. End users use compose.yml.
+# ./start.sh and ./stop.sh pass -f docker-compose.yml explicitly.
+
 services:
   db:
     image: postgres:16-alpine
@@ -25,7 +28,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sharpr}:${POSTGRES_PASSWORD:-sharpr}@db:5432/${POSTGRES_DB:-sharpr}
-      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me}
+      SECRET_KEY: ${SECRET_KEY:-}
+      DATA_DIR: /data
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
       STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
       STORAGE_LOCAL_PATH: /data/recordings
@@ -39,7 +43,7 @@ services:
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-500}
       SEED_DIR: /app/seed
     volumes:
-      - ./data/recordings:/data/recordings
+      - ./data:/data
     ports:
       - "8000:8000"
 

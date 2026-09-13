@@ -36,22 +36,17 @@ need() { command -v "$1" >/dev/null 2>&1 || { echo "Missing: $1"; exit 1; }; }
 port_in_use() { lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1; }
 need docker
 
-if [ ! -f .env ]; then
-  cp .env.example .env
-  KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))' 2>/dev/null || openssl rand -base64 48 | tr -d '\n=/+')"
-  sed -i.bak "s|^SECRET_KEY=.*|SECRET_KEY=$KEY|" .env && rm -f .env.bak
-  echo "Created .env with a random SECRET_KEY. Edit it to change passwords or storage."
-fi
+[ -f .env ] || cp .env.example .env
 mkdir -p data/recordings
 
 # ── Docker mode ───────────────────────────────────────────────────────────
 if [ "$DEV" = 0 ]; then
   set -e
   if [ "$PULL" = 1 ]; then
-    docker compose $PROFILE pull api web
-    docker compose $PROFILE up -d --no-build
+    docker compose -f docker-compose.yml $PROFILE pull api web
+    docker compose -f docker-compose.yml $PROFILE up -d --no-build
   else
-    docker compose $PROFILE up -d --build
+    docker compose -f docker-compose.yml $PROFILE up -d --build
   fi
   echo
   echo "Sharpr is starting."
@@ -61,7 +56,7 @@ if [ "$DEV" = 0 ]; then
   [ -n "$PROFILE" ] && echo "  MinIO  http://localhost:9001"
   echo
   echo "Stop with ./stop.sh"
-  [ "$LOGS" = 1 ] && docker compose logs -f
+  [ "$LOGS" = 1 ] && docker compose -f docker-compose.yml logs -f
   exit 0
 fi
 
@@ -71,9 +66,9 @@ PIDS=()
 cleanup() { echo; echo "Stopping dev servers…"; for p in "${PIDS[@]:-}"; do [ -n "$p" ] && kill "$p" 2>/dev/null; done; wait 2>/dev/null; }
 trap cleanup INT TERM EXIT
 
-echo "▸ Postgres (docker compose db)"
-docker compose up -d db >/dev/null
-for _ in $(seq 1 30); do docker compose exec -T db pg_isready -U "${POSTGRES_USER:-sharpr}" >/dev/null 2>&1 && break; sleep 1; done
+echo "▸ Postgres (docker compose -f docker-compose.yml db)"
+docker compose -f docker-compose.yml up -d db >/dev/null
+for _ in $(seq 1 30); do docker compose -f docker-compose.yml exec -T db pg_isready -U "${POSTGRES_USER:-sharpr}" >/dev/null 2>&1 && break; sleep 1; done
 
 DB_URL="${DATABASE_URL:-postgresql+psycopg://sharpr:sharpr@localhost:5432/sharpr}"
 echo "▸ API"

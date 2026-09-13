@@ -24,9 +24,9 @@ pkill -f "next dev" 2>/dev/null && echo "Stopped web (dev)"
 if command -v docker >/dev/null 2>&1; then
   if [ "$RESET" = 1 ]; then
     read -r -p "Delete the database volume? All accounts, attempts and reviews will be lost. [y/N] " a
-    if [ "$a" = "y" ]; then docker compose --profile s3 down -v; echo "Database volume deleted."; else echo "Kept."; fi
+    if [ "$a" = "y" ]; then docker compose -f docker-compose.yml --profile s3 down -v; echo "Database volume deleted."; else echo "Kept."; fi
   else
-    docker compose --profile s3 down
+    docker compose -f docker-compose.yml --profile s3 down
   fi
 fi
 echo "Stopped."

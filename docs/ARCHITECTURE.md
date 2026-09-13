@@ -14,7 +14,7 @@ The browser only talks to the web origin. Next.js rewrites forward `/api/v1/*`, 
 
 ## Images and deployment
 
-GitHub Actions (`.github/workflows/publish.yml`) builds `iamnabink/sharpr-api` and `iamnabink/sharpr-web` for linux/amd64 and linux/arm64 on every push to `main` (tag `latest` + commit sha) and on `v*` tags (semver tag). End users run `docker-compose.hub.yml`, which references those images and has no build sections; `docker-compose.yml` in the repo carries both `image:` and `build:` so contributors can build locally (`./start.sh`) or pull (`./start.sh --pull`). Publishing needs the repo secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`; without them the workflow skips.
+GitHub Actions (`.github/workflows/publish.yml`) builds `iamnabink/sharpr-api` and `iamnabink/sharpr-web` for linux/amd64 and linux/arm64 on every push to `main` (tag `latest` + commit sha) and on `v*` tags (semver tag). End users run `compose.yml`, which references those images and has no build sections; `docker-compose.yml` in the repo carries both `image:` and `build:` so contributors can build locally (`./start.sh`) or pull (`./start.sh --pull`). Publishing needs the repo secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`; without them the workflow skips.
 
 ## Repository layout
 
@@ -42,7 +42,7 @@ docs/              this file, IMPORT_SCHEMA.md, PRODUCT_SPEC.md
 
 ## Auth
 
-Email + password (argon2). Login returns a JWT (HS256, 30 days) set as an httpOnly `sharpr_session` cookie and also in the body for non-browser clients (send `Authorization: Bearer`). The first registered user is `admin`; `ALLOW_REGISTRATION=false` closes sign-ups afterwards. Every table row carries `user_id`; every query is scoped to the current user.
+Email + password (argon2). `SECRET_KEY` signs sessions; if it is unset the API generates one on first boot and stores it at `<DATA_DIR>/secret_key` (0600) inside the data volume, so a single-node install needs no configuration. Login returns a JWT (HS256, 30 days) set as an httpOnly `sharpr_session` cookie and also in the body for non-browser clients (send `Authorization: Bearer`). The first registered user is `admin`; `ALLOW_REGISTRATION=false` closes sign-ups afterwards. Every table row carries `user_id`; every query is scoped to the current user.
 
 ## Data model
 
