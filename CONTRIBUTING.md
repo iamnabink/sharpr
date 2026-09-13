@@ -27,6 +27,16 @@ Docker images are built and published by CI; you never need to push images by ha
 
 Schema changes need an Alembic migration (`alembic revision --autogenerate -m "..."` in `apps/api`). API JSON is camelCase; timestamps are epoch milliseconds; every table row is scoped by `user_id`.
 
+## Cutting a release
+
+Releases are tagged `vMAJOR.MINOR.PATCH`. Land changes through pull requests labeled `feature`, `bug`, `content`, `docs`, `ci` and so on: GitHub builds the release notes from merged PRs using `.github/release.yml`, so direct pushes to `main` do not show up in them.
+
+```bash
+gh release create v1.1.0 --generate-notes --title "Sharpr v1.1.0" compose.yml
+```
+
+The tag triggers the publish workflow, which pushes `iamnabink/sharpr-api` and `iamnabink/sharpr-web` tagged `1.1.0`, `v1.1.0` and `latest`. Attach `compose.yml` so the release page has everything an installer needs.
+
 ## No AI in the core loop
 
 Sharpr must stay fully useful without any AI service. AI features (speech-to-text, scoring, an AI interviewer) are welcome as **optional, clearly separated** additions that degrade gracefully when not configured. See the roadmap in the README.

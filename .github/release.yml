@@ -1,0 +1,16 @@
+# Categories for GitHub's auto-generated release notes (gh release create --generate-notes).
+# Notes are built from merged pull requests, so land changes through PRs with these labels.
+changelog:
+  exclude:
+    labels: [skip-changelog]
+  categories:
+    - title: New
+      labels: [feature, enhancement]
+    - title: Content packs
+      labels: [content]
+    - title: Fixes
+      labels: [bug, fix]
+    - title: Docs and infrastructure
+      labels: [docs, ci, infra, dependencies]
+    - title: Other changes
+      labels: ["*"]
