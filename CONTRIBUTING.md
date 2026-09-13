@@ -23,6 +23,8 @@ cd apps/web && npm run typecheck && npm run lint
 cd apps/api && ruff check app && python -m compileall -q app
 ```
 
+Docker images are built and published by CI; you never need to push images by hand. Test the containerized stack with `./start.sh` before opening a PR that touches a Dockerfile or the compose files.
+
 Schema changes need an Alembic migration (`alembic revision --autogenerate -m "..."` in `apps/api`). API JSON is camelCase; timestamps are epoch milliseconds; every table row is scoped by `user_id`.
 
 ## No AI in the core loop

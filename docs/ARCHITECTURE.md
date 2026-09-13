@@ -12,6 +12,10 @@ docker compose
 
 The browser only talks to the web origin. Next.js rewrites forward `/api/v1/*`, `/docs`, `/openapi.json` and `/admin/*` to the API container, so cookies are first-party, CORS is unnecessary and media streaming works without extra headers. The rewrite target comes from `API_INTERNAL_URL`, which Next.js resolves at build time: it is a Docker build argument (default `http://api:8000`) and an env var for local `npm run dev` / `./start.sh --dev` (default `http://localhost:8000`). Set `NEXT_PUBLIC_API_URL` only if the browser must reach the API on a different domain (the API's `CORS_ORIGINS` then matters).
 
+## Images and deployment
+
+GitHub Actions (`.github/workflows/publish.yml`) builds `iamnabink/sharpr-api` and `iamnabink/sharpr-web` for linux/amd64 and linux/arm64 on every push to `main` (tag `latest` + commit sha) and on `v*` tags (semver tag). End users run `docker-compose.hub.yml`, which references those images and has no build sections; `docker-compose.yml` in the repo carries both `image:` and `build:` so contributors can build locally (`./start.sh`) or pull (`./start.sh --pull`). Publishing needs the repo secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`; without them the workflow skips.
+
 ## Repository layout
 
 ```
